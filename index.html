@@ -1,0 +1,815 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HLO Master - வீட்டு பட்டியலிடுதல் மற்றும் வீடுகள் கணக்கெடுப்பு</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
+
+    :root {
+      --primary: #0284c7;
+      --primary-hover: #0369a1;
+      --accent: #0ea5e9;
+      --accent-light: #e0f2fe;
+      --bg-gradient: radial-gradient(circle at 10% 20%, rgba(224, 242, 254, 0.8) 0%, rgba(240, 249, 255, 0.9) 50%, rgba(255, 255, 255, 1) 100%);
+      --glass-bg: rgba(255, 255, 255, 0.65);
+      --glass-border: rgba(255, 255, 255, 0.8);
+      --glass-shadow: 0 20px 40px rgba(14, 165, 233, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --success: #10b981;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Noto Sans Tamil', 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg-gradient);
+      background-attachment: fixed;
+      min-height: 100vh;
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    /* Glassmorphism Outer Container */
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 950px;
+      background: var(--glass-bg);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      box-shadow: var(--glass-shadow);
+      padding: 40px;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 30px;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+      padding-bottom: 20px;
+    }
+
+    h1.brand-title {
+      font-size: 2.4rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 6px;
+      letter-spacing: -0.5px;
+    }
+
+    p.subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .hidden { display: none !important; }
+
+    /* Premium Glass Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 24px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), var(--primary));
+      color: white;
+    }
+
+    .btn-success {
+      background: linear-gradient(135deg, #34d399, var(--success));
+      color: white;
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.8);
+      color: var(--text-main);
+      border: 1px solid #cbd5e1;
+      backdrop-filter: blur(4px);
+    }
+
+    .btn-secondary:hover { background: #ffffff; }
+
+    .btn-outline {
+      background: rgba(240, 249, 255, 0.6);
+      border: 1px solid var(--accent);
+      color: var(--primary);
+    }
+
+    .btn-outline:hover { background: var(--accent-light); }
+
+    /* Progress Bar */
+    .progress-box { margin-bottom: 25px; }
+
+    .progress-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    .progress-bar-bg {
+      width: 100%;
+      height: 10px;
+      background: rgba(226, 232, 240, 0.7);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--primary));
+      border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+
+    /* Question Glass Card */
+    .question-card {
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(8px);
+      border-radius: 18px;
+      padding: 28px;
+      border: 1px solid rgba(255, 255, 255, 0.9);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
+      margin-bottom: 25px;
+    }
+
+    .question-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+
+    .question-desc {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+      margin-bottom: 20px;
+    }
+
+    .options-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+      margin-bottom: 20px;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 5px;
+    }
+
+    .option-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 18px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-weight: 500;
+    }
+
+    .option-item:hover {
+      background: var(--accent-light);
+      border-color: var(--accent);
+    }
+
+    .option-item.selected {
+      background: #e0f2fe;
+      border-color: var(--primary);
+      color: var(--primary-hover);
+      font-weight: 600;
+    }
+
+    .option-item input[type="radio"] {
+      margin-right: 12px;
+      accent-color: var(--primary);
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 12px 16px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .input-field:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+    }
+
+    .nav-controls {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    /* Glass Table & Verification Screen */
+    .table-container {
+      width: 100%;
+      overflow-x: auto;
+      margin-top: 15px;
+      border-radius: 14px;
+      border: 1px solid rgba(226, 232, 240, 0.8);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    th {
+      background: rgba(224, 242, 254, 0.9);
+      color: var(--primary);
+      padding: 14px 18px;
+      font-weight: 700;
+      border-bottom: 2px solid #cbd5e1;
+    }
+
+    td {
+      padding: 12px 18px;
+      border-bottom: 1px solid #e2e8f0;
+      color: var(--text-main);
+    }
+
+    tr:hover { background: rgba(240, 249, 255, 0.5); }
+
+    /* Modal Styling */
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(15, 23, 42, 0.4);
+      backdrop-filter: blur(8px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      padding: 20px;
+    }
+
+    .modal-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(16px);
+      width: 100%;
+      max-width: 850px;
+      max-height: 85vh;
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 14px;
+      margin-bottom: 15px;
+    }
+
+    .modal-body {
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1 class="brand-title">HLO Master</h1>
+      <p class="subtitle">இந்திய மக்கள் தொகை கணக்கெடுப்பு – வீட்டு பட்டியலிடுதல் மற்றும் வீடுகள் கணக்கெடுப்பு</p>
+    </header>
+
+    <!-- START SCREEN -->
+    <div id="start-screen" style="text-align: center; padding: 20px 0;">
+      <p style="font-size: 1.05rem; margin-bottom: 25px; color: var(--text-muted);">
+        புதிய கணக்கெடுப்பைத் தொடங்கலாம் அல்லது சேமிக்கப்பட்ட விவரங்களைப் பார்வையிடலாம்.
+      </p>
+      <div style="display: flex; justify-content: center; gap: 15px;">
+        <button class="btn btn-primary" onclick="startSurvey()">
+          <span>புதிய கணக்கெடுப்பு (Start New)</span>
+        </button>
+        <button class="btn btn-outline" onclick="showHistoryScreen()">
+          <span>வரலாறு / சேமிக்கப்பட்டவை (History)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- SURVEY FORM CONTAINER -->
+    <div id="survey-screen" class="hidden">
+      <div class="progress-box">
+        <div class="progress-info">
+          <span id="progress-text">கேள்வி 1 / 33</span>
+          <span id="progress-percent">0%</span>
+        </div>
+        <div class="progress-bar-bg">
+          <div id="progress-bar-fill" class="progress-bar-fill"></div>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div id="question-title" class="question-title"></div>
+        <div id="question-desc" class="question-desc"></div>
+        <div id="options-container" class="options-grid"></div>
+
+        <div style="margin-top: 15px;">
+          <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: 600;" for="answer-input">
+            பதில் (திருத்த / Edit Answer):
+          </label>
+          <input type="text" id="answer-input" class="input-field" placeholder="உங்கள் பதிலை உள்ளிடவும்..." />
+        </div>
+      </div>
+
+      <div class="nav-controls">
+        <button id="prev-btn" class="btn btn-secondary" onclick="prevQuestion()" disabled>
+          <span>முந்தையது</span>
+        </button>
+        <button id="next-btn" class="btn btn-primary" onclick="nextQuestion()">
+          <span>அடுத்தது</span>
+        </button>
+        <button id="verify-btn" class="btn btn-success hidden" onclick="showVerifyScreen()">
+          <span>சரிபார்க்க (Verify All Data)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- PRE-SUBMIT VERIFICATION SCREEN -->
+    <div id="verify-screen" class="hidden">
+      <h2 style="font-size: 1.3rem; color: var(--primary); margin-bottom: 8px;">தரவு சரிபார்ப்பு (Data Verification)</h2>
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
+        சமர்ப்பிப்பதற்கு முன் நீங்கள் பதிவு செய்த அனைத்து பதில்களையும் சரிபார்க்கவும்:
+      </p>
+
+      <div class="table-container" style="max-height: 420px; overflow-y: auto;">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 8%;">வ.எண்</th>
+              <th style="width: 52%;">கேள்வி (Question Title)</th>
+              <th style="width: 40%;">பதிவு செய்யப்பட்ட பதில் (Answer)</th>
+            </tr>
+          </thead>
+          <tbody id="verify-table-body">
+            <!-- Dynamically Rendered -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="nav-controls" style="margin-top: 20px;">
+        <button class="btn btn-secondary" onclick="backToSurvey()">
+          <span>திருத்த மீண்டும் செல்லவும் (Back)</span>
+        </button>
+        <button class="btn btn-success" onclick="submitSurvey()">
+          <span>உறுதி செய்து பதிவிறக்கு (Confirm & Download)</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- HISTORY / STORED DATA SCREEN -->
+    <div id="history-screen" class="hidden">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+        <h2 style="font-size: 1.3rem; color: var(--primary);">சேமிக்கப்பட்ட தரவுகள் (History)</h2>
+        <button class="btn btn-secondary" onclick="goHome()">முகப்பு (Home)</button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>வரிசை</th>
+              <th>குடும்பத் தலைவர் பெயர்</th>
+              <th>வீட்டு எண்</th>
+              <th>தேதி / நேரம்</th>
+              <th>செயல்பாடு</th>
+            </tr>
+          </thead>
+          <tbody id="history-table-body">
+            <!-- Dynamically Rendered -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- CONFIRMATION SCREEN -->
+    <div id="confirm-screen" style="text-align: center; padding: 20px 0;" class="hidden">
+      <h2 style="color: var(--success); margin-bottom: 10px;">வெற்றிகரமாக சேமிக்கப்பட்டது!</h2>
+      <p id="confirm-msg" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;"></p>
+      <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+        <button class="btn btn-secondary" onclick="reEditData()">
+          <span>மறுபதிப்பீடு செய்ய (Re-edit)</span>
+        </button>
+        <button class="btn btn-outline" onclick="showHistoryScreen()">
+          <span>வரலாற்றைப் பார்க்க (View History)</span>
+        </button>
+        <button class="btn btn-primary" onclick="resetSurvey()">
+          <span>புதிய உள்ளீடு (New Entry)</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL FOR VIEWING FULL RECORD FROM HISTORY -->
+  <div id="view-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title" style="color: var(--primary);">முழு விவரங்கள்</h3>
+        <button class="close-btn" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th style="width: 10%;">வரிசை</th>
+                <th style="width: 50%;">கேள்வி (Question)</th>
+                <th style="width: 40%;">பதில் (Recorded Response)</th>
+              </tr>
+            </thead>
+            <tbody id="modal-table-body">
+              <!-- Dynamically Rendered -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const allQuestions = [
+      { id: "q1", title: "1. கட்டிட எண் (Building Number)", desc: "உள்ளாட்சி அல்லது கணக்கெடுப்பு கட்டிட எண்:", options: [] },
+      { id: "q2", title: "2. கணக்கெடுப்பு வீட்டு எண் (Census House Number)", desc: "ஒதுக்கப்பட்ட வீட்டு எண்:", options: [] },
+      { id: "q3", title: "3. தரைக்கு பயன்படுத்தப்பட்ட முதன்மைப் பொருள் (Floor)", desc: "பொருத்தமான விருப்பத்தைத் தேர்ந்தெடுக்கவும்:", options: ["1. களிமண் / மண்", "2. மரம் / மூங்கில்", "3. சுட்ட செங்கல்", "4. கல்", "5. சிமெண்ட்", "6. மொசைக் / தரை ஓடுகள்", "7. ஏனையவை"] },
+      { id: "q4", title: "4. சுவருக்கு பயன்படுத்தப்பட்ட முதன்மைப் பொருள் (Wall)", desc: "பொருத்தமான விருப்பத்தைத் தேர்ந்தெடுக்கவும்:", options: ["1. புல் / வைக்கோல் / மூங்கில்", "2. நெகிழி / பாலித்தீன்", "3. மண் / சுடாத செங்கல்", "4. மரம்", "5. சாந்து பூசப்படாத கல்", "6. சாந்து பூசப்பட்ட கல்", "7. GI / அஸ்பெஸ்டாஸ் தகடுகள்", "8. சுட்ட செங்கல்", "9. காங்கிரீட்", "0. ஏனையவை"] },
+      { id: "q5", title: "5. கூரைக்கு பயன்படுத்தப்பட்ட முதன்மைப் பொருள் (Roof)", desc: "பொருத்தமான விருப்பத்தைத் தேர்ந்தெடுக்கவும்:", options: ["1. புல் / வைக்கோல் / மூங்கில்", "2. நெகிழி / பாலித்தீன்", "3. கைவினை ஓடுகள்", "4. இயந்திர ஓடுகள்", "5. சுட்ட செங்கல்", "6. கல்", "7. சிலேட் கல்", "8. GI / அஸ்பெஸ்டாஸ் தகடுகள்", "9. காங்கிரீட்", "0. ஏனையவை"] },
+      { id: "q6", title: "6. கணக்கெடுப்பு வீட்டின் பயன்பாடு (Use of House)", desc: "வீட்டின் பயன்பாட்டு வகை:", options: ["1. குடியிருப்பு (Residence)", "2. குடியிருப்பு மற்றும் பிற பயன்பாடு", "3. கடை / அலுவலகம்", "4. பள்ளி / கல்லூரி", "5. விடுதி / விருந்தினர் இல்லம்", "6. மருத்துவமனை", "7. தொழிற்சாலை / பட்டறை", "8. வழிபாட்டுத் தளம்", "9. பிற குடியிருப்பு அல்லாதவை", "0. காலியாக உள்ளது (Vacant)"] },
+      { id: "q7", title: "7. கணக்கெடுப்பு வீட்டின் நிலைமை (Condition)", desc: "வீட்டின் நிலை:", options: ["1. நல்ல நிலை (Good)", "2. வாழக்கூடிய நிலை (Livable)", "3. பாழடைந்த நிலை (Dilapidated)"] },
+      { id: "q8", title: "8. குடும்ப வரிசை எண் (Household Number)", desc: "குடும்பத்தின் எண்:", options: [] },
+      { id: "q9", title: "9. வழக்கமாக வசிக்கும் நபர்களின் எண்ணிக்கை (Total Persons)", desc: "மொத்த உறுப்பினர்கள்:", options: ["1 நபர்", "2 நபர்கள்", "3 நபர்கள்", "4 நபர்கள்", "5 நபர்கள்", "5-க்கும் மேல்"] },
+      { id: "q10", title: "10. குடும்பத் தலைவரின் பெயர் (Head Name)", desc: "குடும்பத் தலைவரின் பெயரை உள்ளிடவும்:", options: [] },
+      { id: "q11", title: "11. குடும்பத் தலைவரின் பாலினம் (Sex)", desc: "பாலினம்:", options: ["1. ஆண்", "2. பெண்", "3. திருநங்கை"] },
+      { id: "q12", title: "12. சமூகப் பிரிவு (Social Category)", desc: "பிரிவைத் தேர்ந்தெடுக்கவும்:", options: ["1. SC (பட்டியல் சாதியினர்)", "2. ST (பட்டியல் பழங்குடியினர்)", "3. இதர பிரிவினர்"] },
+      { id: "q13", title: "13. வீட்டின் உரிமையியல் நிலை (Ownership)", desc: "உரிமை விவரம்:", options: ["1. சொந்த வீடு", "2. வாடகை வீடு (வேறு இடத்தில் சொந்த வீடு உள்ளது)", "3. வாடகை வீடு (சொந்தமாக வேறு வீடு இல்லை)", "4. ஏனையவை"] },
+      { id: "q14", title: "14. குடும்பத்தின் கட்டுப்பாட்டில் உள்ள அறைகளின் எண்ணிக்கை (Rooms)", desc: "அறைகளின் எண்ணிக்கை:", options: ["1 அறை", "2 அறைகள்", "3 அறைகள்", "4 அறைகள்", "5+ அறைகள்"] },
+      { id: "q15", title: "15. குடும்பத்தில் உள்ள திருமணமான தம்பதிகளின் எண்ணிக்கை (Couples)", desc: "தம்பதிகளின் எண்ணிக்கை:", options: ["0 தம்பதி", "1 தம்பதி", "2 தம்பதிகள்", "3+ தம்பதிகள்"] },
+      { id: "q16", title: "16. முதன்மையான குடிநீர் ஆதாரம் (Drinking Water)", desc: "குடிநீர் ஆதாரம்:", options: ["1. சுத்திகரிக்கப்பட்ட குழாய் நீர்", "2. சுத்திகரிக்கப்படாத குழாய் நீர்", "3. மூடிய கிணறு", "4. திறந்த கிணறு", "5. கைப்பம்ப்", "6. போர்வெல்", "7. ஊற்று", "8. ஆறு / கால்வாய்", "9. குளம் / ஏரி", "10. பாட்டில் நீர்", "0. இதர"] },
+      { id: "q17", title: "17. குடிநீர் ஆதாரம் அமைந்துள்ள இடம் (Water Availability)", desc: "கிடைக்கும் இடம்:", options: ["1. வளாகத்திற்குள்", "2. வளாகத்திற்கு அருகில்", "3. தூரத்தில்"] },
+      { id: "q18", title: "18. முதன்மையான வெளிச்ச ஆதாரம் (Lighting)", desc: "மின்சாரம் / வெளிச்சம்:", options: ["1. மின்சாரம்", "2. மண்ணெண்ணெய்", "3. சூரிய ஆற்றல் (Solar)", "4. பிற எண்ணெய்", "5. ஏனையவை", "6. வெளிச்ச வசதி இல்லை"] },
+      { id: "q19", title: "19. கழிப்பறை வசதி அணுகல் (Latrine Access)", desc: "கழிப்பறை பயன்பாடு:", options: ["1. பிரத்யேகப் பயன்பாடு (Exclusive)", "2. பகிரப்பட்டது (Shared)", "3. பொதுக் கழிப்பறை (Public)", "4. கழிப்பறை வசதி இல்லை / திறந்தவெளி (Open Defecation)"] },
+      { id: "q20", title: "20. கழிப்பறையின் வகை (Type of Latrine)", desc: "கழிப்பறை முறை:", options: ["1. Flush to Sewer System", "2. Flush to Septic Tank", "3. Flush to Twin Pit", "4. Pit Latrine with Slab", "5. Pit Latrine without Slab", "6. Open Drain Disposal", "7. Other"] },
+      { id: "q21", title: "21. கழிவுநீர் வெளியேறும் வசதி (Drainage)", desc: "சாக்கடை வசதி:", options: ["1. மூடிய சாக்கடை (Closed)", "2. திறந்த சாக்கடை (Open)", "3. கழிவுநீர் வெளியேறும் வசதி இல்லை"] },
+      { id: "q22", title: "22. குளியல் வசதி (Bathing Facility)", desc: "குளிக்கும் இடம்:", options: ["1. கூரையுடன் கூடிய குளியலறை", "2. கூரையில்லாத குளியலறை", "3. குளியல் வசதி இல்லை"] },
+      { id: "q23", title: "23. சமையலறை மற்றும் LPG / PNG இணைப்பு (Kitchen)", desc: "சமையலறை விவரம்:", options: ["1. சமையலறையுடன் LPG/PNG உள்ளது", "2. சமையலறையுடன் LPG/PNG இல்லை", "3. சமையலறை இல்லை (LPG/PNG உள்ளது)", "4. சமையலறை இல்லை (LPG/PNG இல்லை)", "5. சமைப்பதில்லை (No Cooking Done)"] },
+      { id: "q24", title: "24. சமையலுக்கு பயன்படுத்தப்படும் முதன்மை எரிபொருள் (Fuel)", desc: "எரிபொருள் வகை:", options: ["1. விறகு", "2. பயிர் கழிவுகள்", "3. மாட்டு சாணம்", "4. நிலக்கரி", "5. மண்ணெண்ணெய்", "6. LPG / PNG", "7. மின்சாரம்", "8. பயோகேஸ்", "9. சூரிய ஆற்றல்", "0. ஏனையவை"] },
+      { id: "q25", title: "25. ரேடியோ / டிரான்சிஸ்டர் (Radio)", desc: "உள்ளதா?", options: ["1. ஆம் (Yes)", "2. இல்லை (No)"] },
+      { id: "q26", title: "26. தொலைக்காட்சி வசதி (Television)", desc: "டிவி இணைப்பு:", options: ["1. DD Free Dish", "2. DTH / Cable", "3. இரண்டும்", "4. இல்லை (None)"] },
+      { id: "q27", title: "27. இணையதள வசதி (Internet)", desc: "இணையம்:", options: ["1. பிராட்பேண்ட் / Wifi", "2. மொபைல் டேட்டா", "3. இல்லை (No)"] },
+      { id: "q28", title: "28. கணினி / மடிக்கணினி (Laptop/Desktop)", desc: "கணினி:", options: ["1. லேப்டாப்", "2. டெஸ்க்டாப்", "3. இரண்டும்", "4. இல்லை (None)"] },
+      { id: "q29", title: "29. தொலைபேசி / மொபைல் (Telephone/Mobile)", desc: "தொலைபேசி வகை:", options: ["1. லேண்ட்லைன் மட்டும்", "2. ஸ்மார்ட்போன் மட்டும்", "3. சாதாரண மொபைல் மட்டும்", "4. லேண்ட்லைன் + மொபைல்", "5. இல்லை"] },
+      { id: "q30", title: "30. இருசக்கர வாகனம் (Bicycle / Scooter)", desc: "இருசக்கர வாகனம்:", options: ["1. மிதிவண்டி மட்டும் (Bicycle)", "2. பைக் / ஸ்கூட்டர் மட்டும்", "3. இரண்டும்", "4. இல்லை"] },
+      { id: "q31", title: "31. நான்கு சக்கர வாகனம் (Car / Van)", desc: "கார் / வேன் உள்ளதா?", options: ["1. ஆம் (Yes)", "2. இல்லை (No)"] },
+      { id: "q32", title: "32. பிரதான உணவுத் தானியம் (Main Cereal)", desc: "உணவு தானியம்:", options: ["1. அரிசி", "2. கோதுமை", "3. சோளம்", "4. கம்பு", "5. மக்காச்சோளம்", "6. ராகி", "7. ஏனையவை"] },
+      { id: "q33", title: "33. மொபைல் எண் (Mobile Number)", desc: "10-இலக்க மொபைல் எண் உள்ளிடவும்:", options: [] }
+    ];
+
+    let activeQuestions = [];
+    let currentStep = 0;
+    let userAnswers = {};
+
+    function startSurvey() {
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('history-screen').classList.add('hidden');
+      document.getElementById('survey-screen').classList.remove('hidden');
+      calculateActiveQuestions();
+      renderQuestion();
+    }
+
+    function calculateActiveQuestions() {
+      activeQuestions = allQuestions.filter(q => {
+        const q6Ans = userAnswers["q6"] || "";
+        if (["3", "4", "5", "6", "7", "8", "9", "0"].some(code => q6Ans.startsWith(code))) {
+          if (["q8","q9","q10","q11","q12","q13","q14","q15","q16","q17","q18","q19","q20","q21","q22","q23","q24","q25","q26","q27","q28","q29","q30","q31","q32"].includes(q.id)) {
+            return false;
+          }
+        }
+        const q19Ans = userAnswers["q19"] || "";
+        if (q.id === "q20" && q19Ans.startsWith("4.")) return false;
+
+        const q23Ans = userAnswers["q23"] || "";
+        if (q.id === "q24" && q23Ans.startsWith("5.")) return false;
+
+        return true;
+      });
+    }
+
+    function renderQuestion() {
+      calculateActiveQuestions();
+      if (currentStep >= activeQuestions.length) currentStep = activeQuestions.length - 1;
+
+      const q = activeQuestions[currentStep];
+      const total = activeQuestions.length;
+      const progressPercent = Math.round(((currentStep + 1) / total) * 100);
+
+      document.getElementById('progress-text').innerText = `கேள்வி ${currentStep + 1} / ${total}`;
+      document.getElementById('progress-percent').innerText = `${progressPercent}%`;
+      document.getElementById('progress-bar-fill').style.width = `${progressPercent}%`;
+
+      document.getElementById('question-title').innerText = q.title;
+      document.getElementById('question-desc').innerText = q.desc;
+
+      const optsContainer = document.getElementById('options-container');
+      optsContainer.innerHTML = '';
+
+      const currentAns = userAnswers[q.id] || '';
+
+      if (q.options.length > 0) {
+        q.options.forEach((opt) => {
+          const item = document.createElement('label');
+          item.className = `option-item ${currentAns === opt ? 'selected' : ''}`;
+          
+          const radio = document.createElement('input');
+          radio.type = 'radio';
+          radio.name = 'survey-opt';
+          radio.value = opt;
+          radio.checked = currentAns === opt;
+
+          radio.onchange = () => {
+            document.querySelectorAll('.option-item').forEach(el => el.classList.remove('selected'));
+            item.classList.add('selected');
+            document.getElementById('answer-input').value = opt;
+            userAnswers[q.id] = opt;
+            calculateActiveQuestions();
+          };
+
+          item.appendChild(radio);
+          item.appendChild(document.createTextNode(opt));
+          optsContainer.appendChild(item);
+        });
+      }
+
+      const inputField = document.getElementById('answer-input');
+      inputField.value = currentAns;
+      inputField.oninput = (e) => { userAnswers[q.id] = e.target.value; };
+
+      document.getElementById('prev-btn').disabled = (currentStep === 0);
+      if (currentStep === total - 1) {
+        document.getElementById('next-btn').classList.add('hidden');
+        document.getElementById('verify-btn').classList.remove('hidden');
+      } else {
+        document.getElementById('next-btn').classList.remove('hidden');
+        document.getElementById('verify-btn').classList.add('hidden');
+      }
+    }
+
+    function nextQuestion() {
+      if (currentStep < activeQuestions.length - 1) {
+        currentStep++;
+        renderQuestion();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentStep > 0) {
+        currentStep--;
+        renderQuestion();
+      }
+    }
+
+    // PRE-SUBMIT VERIFICATION TABLE SCREEN
+    function showVerifyScreen() {
+      document.getElementById('survey-screen').classList.add('hidden');
+      document.getElementById('verify-screen').classList.remove('hidden');
+
+      const tbody = document.getElementById('verify-table-body');
+      tbody.innerHTML = '';
+
+      allQuestions.forEach((q, idx) => {
+        const tr = document.createElement('tr');
+        const ans = userAnswers[q.id] || '[தவிர்க்கப்பட்டது / SKIPPED]';
+        tr.innerHTML = `
+          <td><strong>${idx + 1}</strong></td>
+          <td>${q.title}</td>
+          <td style="color: var(--primary); font-weight: 600;">${ans}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function backToSurvey() {
+      document.getElementById('verify-screen').classList.add('hidden');
+      document.getElementById('survey-screen').classList.remove('hidden');
+    }
+
+    // SUBMIT & DOWNLOAD
+    async function submitSurvey() {
+      const headName = userAnswers["q10"] || "Census_Data";
+      const houseNo = userAnswers["q2"] || "House";
+      const safeHeadName = headName.trim().replace(/[^a-zA-Z0-9_\u0B80-\u0BFF]/g, "_");
+      const filename = `${safeHeadName}_Census_Data.txt`;
+
+      const formattedContent = generateTableTextDocument();
+
+      try {
+        await saveToOPFS(filename, formattedContent);
+      } catch (err) {
+        console.warn('OPFS error:', err);
+      }
+
+      saveToHistory(headName, houseNo, userAnswers);
+      downloadTextFile(filename, formattedContent);
+
+      document.getElementById('confirm-msg').innerText = `தரவுகள் '${filename}' எனும் பெயரில் வெற்றிகரமாகப் பதிவிறக்கம் செய்யப்பட்டுள்ளது.`;
+      document.getElementById('verify-screen').classList.add('hidden');
+      document.getElementById('confirm-screen').classList.remove('hidden');
+    }
+
+    function generateTableTextDocument() {
+      let doc = "========================================================================================\n";
+      doc += "               வீட்டுப்பட்டியலிடுதல் மற்றும் வீடுகள் கணக்கெடுப்பு (HLO Master)\n";
+      doc += "========================================================================================\n\n";
+      
+      const pad = (str, len) => (str + " ".repeat(len)).slice(0, len);
+
+      doc += "+----+-----------------------------------------------------+----------------------------+\n";
+      doc += "| SNO| கேள்வி (Question Title)                             | பதில் (Recorded Answer)     |\n";
+      doc += "+----+-----------------------------------------------------+----------------------------+\n";
+
+      allQuestions.forEach((q, idx) => {
+        const sno = pad(String(idx + 1), 4);
+        const title = pad(q.title.replace(/\s+/g, ' '), 51);
+        const ansVal = pad(userAnswers[q.id] || '[SKIPPED / N/A]', 26);
+        doc += `| ${sno}| ${title} | ${ansVal} |\n`;
+      });
+
+      doc += "+----+-----------------------------------------------------+----------------------------+\n\n";
+      doc += `பதிவு செய்யப்பட்ட நேரம்: ${new Date().toLocaleString('ta-IN')}\n`;
+      doc += "========================================================================================\n";
+
+      return doc;
+    }
+
+    function saveToHistory(headName, houseNo, answers) {
+      let history = JSON.parse(localStorage.getItem('hlo_history') || '[]');
+      history.push({
+        id: Date.now(),
+        headName: headName,
+        houseNo: houseNo,
+        timestamp: new Date().toLocaleString('ta-IN'),
+        answers: { ...answers }
+      });
+      localStorage.setItem('hlo_history', JSON.stringify(history));
+    }
+
+    function showHistoryScreen() {
+      document.getElementById('start-screen').classList.add('hidden');
+      document.getElementById('confirm-screen').classList.add('hidden');
+      document.getElementById('survey-screen').classList.add('hidden');
+      document.getElementById('verify-screen').classList.add('hidden');
+      document.getElementById('history-screen').classList.remove('hidden');
+
+      const tbody = document.getElementById('history-table-body');
+      tbody.innerHTML = '';
+
+      let history = JSON.parse(localStorage.getItem('hlo_history') || '[]');
+
+      if (history.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">சேமிக்கப்பட்ட தரவுகள் எதுவுமில்லை</td></tr>';
+        return;
+      }
+
+      history.forEach((entry, idx) => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td><strong>${entry.headName || '-'}</strong></td>
+          <td>${entry.houseNo || '-'}</td>
+          <td>${entry.timestamp}</td>
+          <td>
+            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="viewHistoryData(${entry.id})">
+              திறந்து பார் (Open)
+            </button>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function viewHistoryData(entryId) {
+      let history = JSON.parse(localStorage.getItem('hlo_history') || '[]');
+      const entry = history.find(e => e.id === entryId);
+
+      if (!entry) return;
+
+      document.getElementById('modal-title').innerText = `${entry.headName || 'குடும்ப தலைவர்'} - விவரங்கள்`;
+
+      const tbody = document.getElementById('modal-table-body');
+      tbody.innerHTML = '';
+
+      allQuestions.forEach((q, idx) => {
+        const tr = document.createElement('tr');
+        const ans = entry.answers[q.id] || '[SKIPPED / N/A]';
+        tr.innerHTML = `
+          <td>${idx + 1}</td>
+          <td>${q.title}</td>
+          <td><strong style="color: var(--primary);">${ans}</strong></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      document.getElementById('view-modal').classList.remove('hidden');
+    }
+
+    function closeModal() {
+      document.getElementById('view-modal').classList.add('hidden');
+    }
+
+    function goHome() {
+      document.getElementById('history-screen').classList.add('hidden');
+      document.getElementById('start-screen').classList.remove('hidden');
+    }
+
+    async function saveToOPFS(fileName, content) {
+      if ('storage' in navigator && 'getDirectory' in navigator.storage) {
+        const root = await navigator.storage.getDirectory();
+        const fileHandle = await root.getFileHandle(fileName, { create: true });
+        const writable = await fileHandle.createWritable();
+        await writable.write(content);
+        await writable.close();
+      }
+    }
+
+    function downloadTextFile(filename, text) {
+      const element = document.createElement('a');
+      element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+      element.setAttribute('download', filename);
+      element.style.display = 'none';
+      document.body.appendChild(element);
+      element.click();
+      document.body.removeChild(element);
+    }
+
+    function reEditData() {
+      document.getElementById('confirm-screen').classList.add('hidden');
+      document.getElementById('survey-screen').classList.remove('hidden');
+      renderQuestion();
+    }
+
+    function resetSurvey() {
+      userAnswers = {};
+      currentStep = 0;
+      document.getElementById('confirm-screen').classList.add('hidden');
+      document.getElementById('start-screen').classList.remove('hidden');
+    }
+  </script>
+</body>
+</html>
