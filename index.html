@@ -4,21 +4,28 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HLO Master - வீட்டு பட்டியலிடுதல் மற்றும் வீடுகள் கணக்கெடுப்பு</title>
+  
+  <!-- PWA & Mobile Meta Tags -->
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#2563eb" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="HLO Master" />
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+Tamil:wght@400;500;600;700&display=swap');
 
     :root {
-      --primary: #0284c7;
-      --primary-hover: #0369a1;
-      --accent: #0ea5e9;
-      --accent-light: #e0f2fe;
-      --bg-gradient: radial-gradient(circle at 10% 20%, rgba(224, 242, 254, 0.8) 0%, rgba(240, 249, 255, 0.9) 50%, rgba(255, 255, 255, 1) 100%);
-      --glass-bg: rgba(255, 255, 255, 0.65);
-      --glass-border: rgba(255, 255, 255, 0.8);
-      --glass-shadow: 0 20px 40px rgba(14, 165, 233, 0.12), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+      --primary: #2563eb;
+      --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+      --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+      --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      --glass-bg: rgba(255, 255, 255, 0.75);
+      --glass-border: rgba(255, 255, 255, 0.9);
+      --glass-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.4);
       --text-main: #0f172a;
-      --text-muted: #475569;
-      --success: #10b981;
+      --text-muted: #64748b;
+      --card-bg: rgba(255, 255, 255, 0.85);
     }
 
     * {
@@ -28,201 +35,301 @@
     }
 
     body {
-      font-family: 'Noto Sans Tamil', 'Plus Jakarta Sans', sans-serif;
-      background: var(--bg-gradient);
+      font-family: 'Noto Sans Tamil', 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: radial-gradient(circle at 15% 15%, #e0f2fe 0%, #f0f9ff 35%, #f8fafc 100%);
       background-attachment: fixed;
       min-height: 100vh;
       color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 24px 16px;
     }
 
-    /* Glassmorphism Outer Container */
+    /* Floating Universal Home Button */
+    .home-fab {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      z-index: 1000;
+      color: var(--primary);
+    }
+
+    .home-fab:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
+      background: #ffffff;
+    }
+
+    .home-fab svg {
+      width: 22px;
+      height: 22px;
+      fill: currentColor;
+    }
+
+    /* Container */
     .container {
       position: relative;
       width: 100%;
-      max-width: 950px;
+      max-width: 900px;
       background: var(--glass-bg);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border: 1px solid var(--glass-border);
-      border-radius: 24px;
+      border-radius: 28px;
       box-shadow: var(--glass-shadow);
       padding: 40px;
+      animation: fadeIn 0.4s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     header {
       text-align: center;
-      margin-bottom: 30px;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+      margin-bottom: 24px;
       padding-bottom: 20px;
+      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
     }
 
     h1.brand-title {
-      font-size: 2.4rem;
-      font-weight: 700;
-      background: linear-gradient(135deg, var(--primary), var(--accent));
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 6px;
-      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      letter-spacing: -0.02em;
     }
 
     p.subtitle {
       color: var(--text-muted);
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 500;
+    }
+
+    /* Storage Card on Home Screen */
+    .storage-card {
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(203, 213, 225, 0.6);
+      border-radius: 16px;
+      padding: 16px 20px;
+      margin-bottom: 24px;
+      text-align: left;
+    }
+
+    .storage-card-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .storage-progress-bg {
+      width: 100%;
+      height: 8px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 6px;
+    }
+
+    .storage-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--primary-gradient);
+      border-radius: 999px;
+      transition: width 0.4s ease;
+    }
+
+    .storage-info-text {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
     }
 
     .hidden { display: none !important; }
 
-    /* Premium Glass Buttons */
+    /* Modern Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 8px;
-      padding: 12px 24px;
+      gap: 10px;
+      padding: 14px 28px;
       font-size: 0.95rem;
       font-weight: 600;
-      border-radius: 12px;
-      border: 1px solid transparent;
+      border-radius: 14px;
+      border: none;
       cursor: pointer;
       transition: all 0.25s ease;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
+      text-decoration: none;
     }
 
     .btn:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(14, 165, 233, 0.25);
+    }
+
+    .btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none !important;
     }
 
     .btn-primary {
-      background: linear-gradient(135deg, var(--accent), var(--primary));
+      background: var(--primary-gradient);
       color: white;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
+    }
+
+    .btn-primary:hover {
+      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
     }
 
     .btn-success {
-      background: linear-gradient(135deg, #34d399, var(--success));
+      background: var(--success-gradient);
       color: white;
+      box-shadow: 0 8px 18px rgba(16, 185, 129, 0.25);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.8);
+      background: rgba(255, 255, 255, 0.9);
       color: var(--text-main);
       border: 1px solid #cbd5e1;
-      backdrop-filter: blur(4px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
     }
 
-    .btn-secondary:hover { background: #ffffff; }
+    .btn-secondary:hover {
+      background: #ffffff;
+      border-color: #94a3b8;
+    }
 
     .btn-outline {
-      background: rgba(240, 249, 255, 0.6);
-      border: 1px solid var(--accent);
-      color: var(--primary);
+      background: rgba(238, 242, 255, 0.6);
+      border: 1.5px solid #a5b4fc;
+      color: #4338ca;
     }
 
-    .btn-outline:hover { background: var(--accent-light); }
+    .btn-outline:hover {
+      background: #e0e7ff;
+    }
 
     /* Progress Bar */
-    .progress-box { margin-bottom: 25px; }
+    .progress-box { margin-bottom: 28px; }
 
     .progress-info {
       display: flex;
       justify-content: space-between;
-      font-size: 0.85rem;
+      font-size: 0.88rem;
       color: var(--text-muted);
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       font-weight: 600;
     }
 
     .progress-bar-bg {
       width: 100%;
       height: 10px;
-      background: rgba(226, 232, 240, 0.7);
-      border-radius: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
       overflow: hidden;
     }
 
     .progress-bar-fill {
       height: 100%;
       width: 0%;
-      background: linear-gradient(90deg, var(--accent), var(--primary));
-      border-radius: 10px;
-      transition: width 0.3s ease;
+      background: var(--accent-gradient);
+      border-radius: 999px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     /* Question Glass Card */
     .question-card {
-      background: rgba(255, 255, 255, 0.75);
-      backdrop-filter: blur(8px);
-      border-radius: 18px;
-      padding: 28px;
-      border: 1px solid rgba(255, 255, 255, 0.9);
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.03);
-      margin-bottom: 25px;
+      background: var(--card-bg);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      padding: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
+      margin-bottom: 28px;
     }
 
     .question-title {
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
       color: var(--text-main);
     }
 
     .question-desc {
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       color: var(--text-muted);
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .options-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 10px;
-      margin-bottom: 20px;
-      max-height: 280px;
+      gap: 12px;
+      margin-bottom: 24px;
+      max-height: 300px;
       overflow-y: auto;
-      padding-right: 5px;
+      padding-right: 6px;
     }
 
     .option-item {
       display: flex;
       align-items: center;
-      padding: 12px 18px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
+      padding: 14px 20px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
       cursor: pointer;
       transition: all 0.2s ease;
       font-weight: 500;
     }
 
     .option-item:hover {
-      background: var(--accent-light);
-      border-color: var(--accent);
+      background: #f0f9ff;
+      border-color: #3b82f6;
     }
 
     .option-item.selected {
-      background: #e0f2fe;
+      background: #eff6ff;
       border-color: var(--primary);
-      color: var(--primary-hover);
+      color: var(--primary);
       font-weight: 600;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
     }
 
     .option-item input[type="radio"] {
-      margin-right: 12px;
+      margin-right: 14px;
       accent-color: var(--primary);
+      transform: scale(1.15);
     }
 
     .input-field {
       width: 100%;
-      padding: 12px 16px;
-      background: rgba(255, 255, 255, 0.9);
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
+      padding: 14px 18px;
+      background: rgba(255, 255, 255, 0.95);
+      border: 1.5px solid #cbd5e1;
+      border-radius: 12px;
       color: var(--text-main);
       font-size: 0.95rem;
       outline: none;
@@ -230,25 +337,25 @@
     }
 
     .input-field:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.15);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
     }
 
     .nav-controls {
       display: flex;
       justify-content: space-between;
-      gap: 15px;
+      gap: 16px;
     }
 
     /* Glass Table & Verification Screen */
     .table-container {
       width: 100%;
       overflow-x: auto;
-      margin-top: 15px;
-      border-radius: 14px;
+      margin-top: 16px;
+      border-radius: 16px;
       border: 1px solid rgba(226, 232, 240, 0.8);
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
     }
 
     table {
@@ -259,42 +366,42 @@
     }
 
     th {
-      background: rgba(224, 242, 254, 0.9);
-      color: var(--primary);
-      padding: 14px 18px;
+      background: #f1f5f9;
+      color: #334155;
+      padding: 16px 20px;
       font-weight: 700;
-      border-bottom: 2px solid #cbd5e1;
+      border-bottom: 2px solid #e2e8f0;
     }
 
     td {
-      padding: 12px 18px;
-      border-bottom: 1px solid #e2e8f0;
+      padding: 14px 20px;
+      border-bottom: 1px solid #f1f5f9;
       color: var(--text-main);
     }
 
-    tr:hover { background: rgba(240, 249, 255, 0.5); }
+    tr:hover { background: rgba(241, 245, 249, 0.6); }
 
     /* Modal Styling */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.4);
+      background: rgba(15, 23, 42, 0.5);
       backdrop-filter: blur(8px);
       display: flex;
       justify-content: center;
       align-items: center;
-      z-index: 999;
+      z-index: 1001;
       padding: 20px;
     }
 
     .modal-card {
       background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(16px);
+      backdrop-filter: blur(20px);
       width: 100%;
       max-width: 850px;
       max-height: 85vh;
-      border-radius: 20px;
-      padding: 28px;
+      border-radius: 24px;
+      padding: 32px;
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
       display: flex;
       flex-direction: column;
@@ -305,8 +412,8 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 14px;
-      margin-bottom: 15px;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
     }
 
     .modal-body {
@@ -317,13 +424,21 @@
     .close-btn {
       background: transparent;
       border: none;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       cursor: pointer;
       color: var(--text-muted);
+      line-height: 1;
     }
   </style>
 </head>
 <body>
+
+  <!-- UNIVERSAL HOME BUTTON -->
+  <button class="home-fab" onclick="goHome()" title="Home / முகப்பு">
+    <svg viewBox="0 0 24 24">
+      <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+    </svg>
+  </button>
 
   <div class="container">
     <header>
@@ -332,11 +447,27 @@
     </header>
 
     <!-- START SCREEN -->
-    <div id="start-screen" style="text-align: center; padding: 20px 0;">
-      <p style="font-size: 1.05rem; margin-bottom: 25px; color: var(--text-muted);">
+    <div id="start-screen" style="text-align: center; padding: 10px 0;">
+      <p style="font-size: 1.05rem; margin-bottom: 20px; color: var(--text-muted);">
         புதிய கணக்கெடுப்பைத் தொடங்கலாம் அல்லது சேமிக்கப்பட்ட விவரங்களைப் பார்வையிடலாம்.
       </p>
-      <div style="display: flex; justify-content: center; gap: 15px;">
+
+      <!-- OPFS Storage Quota Info Card -->
+      <div class="storage-card">
+        <div class="storage-card-header">
+          <span>சேமிப்பக அளவு (OPFS Storage Quota)</span>
+          <span id="storage-percent">0%</span>
+        </div>
+        <div class="storage-progress-bg">
+          <div id="storage-progress-fill" class="storage-progress-fill"></div>
+        </div>
+        <div class="storage-info-text">
+          <span id="storage-used">பயன்படுத்தப்பட்டது: 0 MB</span>
+          <span id="storage-quota">மொத்தம்: 0 MB</span>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
         <button class="btn btn-primary" onclick="startSurvey()">
           <span>புதிய கணக்கெடுப்பு (Start New)</span>
         </button>
@@ -363,8 +494,8 @@
         <div id="question-desc" class="question-desc"></div>
         <div id="options-container" class="options-grid"></div>
 
-        <div style="margin-top: 15px;">
-          <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: 600;" for="answer-input">
+        <div style="margin-top: 16px;">
+          <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 600;" for="answer-input">
             பதில் (திருத்த / Edit Answer):
           </label>
           <input type="text" id="answer-input" class="input-field" placeholder="உங்கள் பதிலை உள்ளிடவும்..." />
@@ -387,7 +518,7 @@
     <!-- PRE-SUBMIT VERIFICATION SCREEN -->
     <div id="verify-screen" class="hidden">
       <h2 style="font-size: 1.3rem; color: var(--primary); margin-bottom: 8px;">தரவு சரிபார்ப்பு (Data Verification)</h2>
-      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 15px;">
+      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
         சமர்ப்பிப்பதற்கு முன் நீங்கள் பதிவு செய்த அனைத்து பதில்களையும் சரிபார்க்கவும்:
       </p>
 
@@ -406,7 +537,7 @@
         </table>
       </div>
 
-      <div class="nav-controls" style="margin-top: 20px;">
+      <div class="nav-controls" style="margin-top: 24px;">
         <button class="btn btn-secondary" onclick="backToSurvey()">
           <span>திருத்த மீண்டும் செல்லவும் (Back)</span>
         </button>
@@ -418,7 +549,7 @@
 
     <!-- HISTORY / STORED DATA SCREEN -->
     <div id="history-screen" class="hidden">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <h2 style="font-size: 1.3rem; color: var(--primary);">சேமிக்கப்பட்ட தரவுகள் (History)</h2>
         <button class="btn btn-secondary" onclick="goHome()">முகப்பு (Home)</button>
       </div>
@@ -443,8 +574,8 @@
 
     <!-- CONFIRMATION SCREEN -->
     <div id="confirm-screen" style="text-align: center; padding: 20px 0;" class="hidden">
-      <h2 style="color: var(--success); margin-bottom: 10px;">வெற்றிகரமாக சேமிக்கப்பட்டது!</h2>
-      <p id="confirm-msg" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 20px;"></p>
+      <h2 style="color: #059669; margin-bottom: 12px; font-size: 1.5rem;">வெற்றிகரமாக சேமிக்கப்பட்டது!</h2>
+      <p id="confirm-msg" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;"></p>
       <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
         <button class="btn btn-secondary" onclick="reEditData()">
           <span>மறுபதிப்பீடு செய்ய (Re-edit)</span>
@@ -486,6 +617,36 @@
   </div>
 
   <script>
+    // Register Service Worker for Offline PWA Support
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js')
+          .then(reg => console.log('Service Worker Registered'))
+          .catch(err => console.warn('SW registration failed: ', err));
+      });
+    }
+
+    // Update OPFS Storage Quota Display
+    async function updateStorageQuota() {
+      if ('storage' in navigator && 'estimate' in navigator.storage) {
+        try {
+          const { usage, quota } = await navigator.storage.estimate();
+          const usageMB = (usage / (1024 * 1024)).toFixed(2);
+          const quotaMB = (quota / (1024 * 1024)).toFixed(0);
+          const percent = ((usage / quota) * 100).toFixed(1);
+
+          document.getElementById('storage-used').innerText = `பயன்படுத்தப்பட்டது: ${usageMB} MB`;
+          document.getElementById('storage-quota').innerText = `மொத்தம்: ${quotaMB} MB`;
+          document.getElementById('storage-percent').innerText = `${percent}%`;
+          document.getElementById('storage-progress-fill').style.width = `${percent}%`;
+        } catch (e) {
+          console.warn('Storage Estimate failed:', e);
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', updateStorageQuota);
+
     const allQuestions = [
       { id: "q1", title: "1. கட்டிட எண் (Building Number)", desc: "உள்ளாட்சி அல்லது கணக்கெடுப்பு கட்டிட எண்:", options: [] },
       { id: "q2", title: "2. கணக்கெடுப்பு வீட்டு எண் (Census House Number)", desc: "ஒதுக்கப்பட்ட வீட்டு எண்:", options: [] },
@@ -525,6 +686,15 @@
     let activeQuestions = [];
     let currentStep = 0;
     let userAnswers = {};
+
+    function goHome() {
+      document.getElementById('history-screen').classList.add('hidden');
+      document.getElementById('survey-screen').classList.add('hidden');
+      document.getElementById('verify-screen').classList.add('hidden');
+      document.getElementById('confirm-screen').classList.add('hidden');
+      document.getElementById('start-screen').classList.remove('hidden');
+      updateStorageQuota();
+    }
 
     function startSurvey() {
       document.getElementById('start-screen').classList.add('hidden');
@@ -671,6 +841,7 @@
       document.getElementById('confirm-msg').innerText = `தரவுகள் '${filename}' எனும் பெயரில் வெற்றிகரமாகப் பதிவிறக்கம் செய்யப்பட்டுள்ளது.`;
       document.getElementById('verify-screen').classList.add('hidden');
       document.getElementById('confirm-screen').classList.remove('hidden');
+      updateStorageQuota();
     }
 
     function generateTableTextDocument() {
@@ -773,11 +944,6 @@
       document.getElementById('view-modal').classList.add('hidden');
     }
 
-    function goHome() {
-      document.getElementById('history-screen').classList.add('hidden');
-      document.getElementById('start-screen').classList.remove('hidden');
-    }
-
     async function saveToOPFS(fileName, content) {
       if ('storage' in navigator && 'getDirectory' in navigator.storage) {
         const root = await navigator.storage.getDirectory();
@@ -809,6 +975,7 @@
       currentStep = 0;
       document.getElementById('confirm-screen').classList.add('hidden');
       document.getElementById('start-screen').classList.remove('hidden');
+      updateStorageQuota();
     }
   </script>
 </body>
