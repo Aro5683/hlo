@@ -975,5 +975,38 @@
       updateStorageQuota();
     }
   </script>
+  <script>
+  // Register Service Worker with Auto-Reload on Update
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').then((registration) => {
+      
+      // Check for updates periodically when online
+      registration.onupdatefound = () => {
+        const installingWorker = registration.installing;
+        if (installingWorker) {
+          installingWorker.onstatechange = () => {
+            if (installingWorker.state === 'installed') {
+              if (navigator.serviceWorker.controller) {
+                // New content available; automatically reload page
+                console.log('New update found! Auto-refreshing page...');
+                window.location.reload();
+              }
+            }
+          };
+        }
+      };
+
+    }).catch(err => console.warn('SW registration failed:', err));
+  });
+
+  // Re-check for updates as soon as the internet comes back online
+  window.addEventListener('online', () => {
+    navigator.serviceWorker.ready.then((registration) => {
+      registration.update();
+    });
+  });
+}
+</script>
 </body>
 </html>
