@@ -2,14 +2,14 @@
 <html lang="ta">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>HLO Master - வீட்டு பட்டியலிடுதல் மற்றும் வீடுகள் கணக்கெடுப்பு</title>
   
   <!-- PWA & Mobile Meta Tags -->
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#2563eb" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="HLO Master" />
 
   <style>
@@ -20,122 +20,119 @@
       --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
       --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
       --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      --glass-bg: rgba(255, 255, 255, 0.75);
-      --glass-border: rgba(255, 255, 255, 0.9);
-      --glass-shadow: 0 25px 50px -12px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(255, 255, 255, 0.4);
+      --glass-bg: rgba(255, 255, 255, 0.88);
+      --glass-border: rgba(255, 255, 255, 0.95);
+      --glass-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
       --text-main: #0f172a;
       --text-muted: #64748b;
-      --card-bg: rgba(255, 255, 255, 0.85);
+      --card-bg: #ffffff;
     }
 
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
       font-family: 'Noto Sans Tamil', 'Plus Jakarta Sans', -apple-system, sans-serif;
-      background: radial-gradient(circle at 15% 15%, #e0f2fe 0%, #f0f9ff 35%, #f8fafc 100%);
+      background: #f1f5f9;
+      background-image: radial-gradient(circle at 50% 0%, #e0f2fe 0%, #f1f5f9 70%);
       background-attachment: fixed;
       min-height: 100vh;
       color: var(--text-main);
       display: flex;
       justify-content: center;
-      align-items: center;
-      padding: 24px 16px;
+      align-items: flex-start;
+      padding: 12px;
     }
 
     /* Floating Universal Home Button */
     .home-fab {
       position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 48px;
-      height: 48px;
+      top: 12px;
+      right: 12px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.85);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--glass-border);
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.08);
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
       z-index: 1000;
       color: var(--primary);
     }
 
-    .home-fab:hover {
-      transform: translateY(-2px) scale(1.05);
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.2);
-      background: #ffffff;
+    .home-fab:active {
+      transform: scale(0.92);
     }
 
     .home-fab svg {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       fill: currentColor;
     }
 
-    /* Container */
+    /* Outer Main Container */
     .container {
       position: relative;
       width: 100%;
-      max-width: 900px;
+      max-width: 768px;
       background: var(--glass-bg);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border: 1px solid var(--glass-border);
-      border-radius: 28px;
+      border-radius: 20px;
       box-shadow: var(--glass-shadow);
-      padding: 40px;
-      animation: fadeIn 0.4s ease-out;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+      padding: 20px 16px;
+      margin-top: 8px;
+      margin-bottom: 20px;
     }
 
     header {
       text-align: center;
-      margin-bottom: 24px;
-      padding-bottom: 20px;
-      border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      padding-right: 40px; /* Space for Home FAB */
+      border-bottom: 1px solid #e2e8f0;
     }
 
     h1.brand-title {
-      font-size: 2.5rem;
+      font-size: 1.6rem;
       font-weight: 800;
       background: var(--primary-gradient);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      margin-bottom: 8px;
-      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+      line-height: 1.2;
     }
 
     p.subtitle {
       color: var(--text-muted);
-      font-size: 1rem;
+      font-size: 0.85rem;
       font-weight: 500;
+      line-height: 1.3;
     }
 
     /* Storage Card on Home Screen */
     .storage-card {
-      background: rgba(255, 255, 255, 0.6);
-      border: 1px solid rgba(203, 213, 225, 0.6);
-      border-radius: 16px;
-      padding: 16px 20px;
-      margin-bottom: 24px;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px;
+      margin: 16px 0 20px 0;
       text-align: left;
     }
 
     .storage-card-header {
       display: flex;
       justify-content: space-between;
-      font-size: 0.85rem;
+      font-size: 0.8rem;
       font-weight: 700;
       color: var(--text-main);
       margin-bottom: 8px;
@@ -147,7 +144,7 @@
       background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
 
     .storage-progress-fill {
@@ -159,7 +156,7 @@
     }
 
     .storage-info-text {
-      font-size: 0.78rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       display: flex;
       justify-content: space-between;
@@ -167,28 +164,37 @@
 
     .hidden { display: none !important; }
 
-    /* Modern Buttons */
+    /* Touch-Friendly Responsive Buttons */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+    }
+
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
-      padding: 14px 28px;
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 16px;
       font-size: 0.95rem;
       font-weight: 600;
-      border-radius: 14px;
+      border-radius: 12px;
       border: none;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.2s ease;
       text-decoration: none;
+      box-sizing: border-box;
     }
 
-    .btn:hover {
-      transform: translateY(-2px);
+    .btn:active {
+      transform: scale(0.98);
     }
 
     .btn:disabled {
-      opacity: 0.5;
+      opacity: 0.4;
       cursor: not-allowed;
       transform: none !important;
     }
@@ -196,56 +202,42 @@
     .btn-primary {
       background: var(--primary-gradient);
       color: white;
-      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.25);
-    }
-
-    .btn-primary:hover {
-      box-shadow: 0 12px 24px rgba(37, 99, 235, 0.35);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     }
 
     .btn-success {
       background: var(--success-gradient);
       color: white;
-      box-shadow: 0 8px 18px rgba(16, 185, 129, 0.25);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
     }
 
     .btn-secondary {
-      background: rgba(255, 255, 255, 0.9);
+      background: #ffffff;
       color: var(--text-main);
       border: 1px solid #cbd5e1;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.03);
-    }
-
-    .btn-secondary:hover {
-      background: #ffffff;
-      border-color: #94a3b8;
     }
 
     .btn-outline {
-      background: rgba(238, 242, 255, 0.6);
-      border: 1.5px solid #a5b4fc;
-      color: #4338ca;
+      background: #eff6ff;
+      border: 1.5px solid #bfdbfe;
+      color: #1d4ed8;
     }
 
-    .btn-outline:hover {
-      background: #e0e7ff;
-    }
-
-    /* Progress Bar */
-    .progress-box { margin-bottom: 28px; }
+    /* Progress Indicator */
+    .progress-box { margin-bottom: 16px; }
 
     .progress-info {
       display: flex;
       justify-content: space-between;
-      font-size: 0.88rem;
+      font-size: 0.8rem;
       color: var(--text-muted);
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       font-weight: 600;
     }
 
     .progress-bar-bg {
       width: 100%;
-      height: 10px;
+      height: 6px;
       background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
@@ -256,58 +248,55 @@
       width: 0%;
       background: var(--accent-gradient);
       border-radius: 999px;
-      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: width 0.3s ease;
     }
 
-    /* Question Glass Card */
+    /* Question Card Styling */
     .question-card {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border-radius: 20px;
-      padding: 32px;
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
-      margin-bottom: 28px;
+      border-radius: 16px;
+      padding: 16px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
+      margin-bottom: 16px;
     }
 
     .question-title {
-      font-size: 1.25rem;
+      font-size: 1.05rem;
       font-weight: 700;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       color: var(--text-main);
+      line-height: 1.35;
     }
 
     .question-desc {
-      font-size: 0.9rem;
+      font-size: 0.82rem;
       color: var(--text-muted);
-      margin-bottom: 24px;
+      margin-bottom: 16px;
     }
 
     .options-grid {
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 12px;
-      margin-bottom: 24px;
-      max-height: 300px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 42vh;
       overflow-y: auto;
-      padding-right: 6px;
+      padding-right: 4px;
+      margin-bottom: 16px;
     }
 
     .option-item {
       display: flex;
       align-items: center;
-      padding: 14px 20px;
-      background: rgba(255, 255, 255, 0.95);
+      padding: 12px 14px;
+      background: #f8fafc;
       border: 1.5px solid #e2e8f0;
-      border-radius: 12px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: all 0.2s ease;
+      font-size: 0.88rem;
       font-weight: 500;
-    }
-
-    .option-item:hover {
-      background: #f0f9ff;
-      border-color: #3b82f6;
+      line-height: 1.3;
+      word-break: break-word;
     }
 
     .option-item.selected {
@@ -315,94 +304,98 @@
       border-color: var(--primary);
       color: var(--primary);
       font-weight: 600;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
     }
 
     .option-item input[type="radio"] {
-      margin-right: 14px;
+      margin-right: 12px;
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
       accent-color: var(--primary);
-      transform: scale(1.15);
     }
 
     .input-field {
       width: 100%;
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.95);
+      min-height: 44px;
+      padding: 10px 14px;
+      background: #ffffff;
       border: 1.5px solid #cbd5e1;
-      border-radius: 12px;
+      border-radius: 10px;
       color: var(--text-main);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       outline: none;
-      transition: all 0.2s;
     }
 
     .input-field:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
     }
 
+    /* Fixed Navigation Footer for Mobile Survey */
     .nav-controls {
       display: flex;
-      justify-content: space-between;
-      gap: 16px;
+      gap: 10px;
+      margin-top: 12px;
     }
 
-    /* Glass Table & Verification Screen */
+    .nav-controls .btn {
+      flex: 1;
+    }
+
+    /* Responsive Mobile Tables */
     .table-container {
       width: 100%;
       overflow-x: auto;
-      margin-top: 16px;
-      border-radius: 16px;
-      border: 1px solid rgba(226, 232, 240, 0.8);
-      background: rgba(255, 255, 255, 0.9);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+      margin-top: 12px;
+      border-radius: 12px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+      -webkit-overflow-scrolling: touch;
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 0.9rem;
+      font-size: 0.82rem;
+      table-layout: fixed;
+    }
+
+    th, td {
+      padding: 10px 8px;
+      border-bottom: 1px solid #f1f5f9;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
     }
 
     th {
-      background: #f1f5f9;
+      background: #f8fafc;
       color: #334155;
-      padding: 16px 20px;
       font-weight: 700;
       border-bottom: 2px solid #e2e8f0;
     }
 
-    td {
-      padding: 14px 20px;
-      border-bottom: 1px solid #f1f5f9;
-      color: var(--text-main);
-    }
-
-    tr:hover { background: rgba(241, 245, 249, 0.6); }
-
-    /* Modal Styling */
+    /* Modal Layout Fixes */
     .modal-overlay {
       position: fixed;
       top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.5);
-      backdrop-filter: blur(8px);
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 1001;
-      padding: 20px;
+      padding: 12px;
     }
 
     .modal-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
+      background: #ffffff;
       width: 100%;
-      max-width: 850px;
-      max-height: 85vh;
-      border-radius: 24px;
-      padding: 32px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      max-width: 650px;
+      max-height: 90vh;
+      border-radius: 18px;
+      padding: 18px 14px;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
       display: flex;
       flex-direction: column;
     }
@@ -412,8 +405,8 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #e2e8f0;
-      padding-bottom: 16px;
-      margin-bottom: 16px;
+      padding-bottom: 10px;
+      margin-bottom: 10px;
     }
 
     .modal-body {
@@ -424,10 +417,20 @@
     .close-btn {
       background: transparent;
       border: none;
-      font-size: 1.8rem;
+      font-size: 1.6rem;
       cursor: pointer;
       color: var(--text-muted);
-      line-height: 1;
+      padding: 0 8px;
+    }
+
+    /* Media Queries for Desktop Polish */
+    @media (min-width: 640px) {
+      .container { padding: 32px; }
+      h1.brand-title { font-size: 2.2rem; }
+      p.subtitle { font-size: 0.95rem; }
+      .btn-group { flex-direction: row; }
+      .question-title { font-size: 1.2rem; }
+      th, td { padding: 12px 14px; font-size: 0.88rem; }
     }
   </style>
 </head>
@@ -443,12 +446,12 @@
   <div class="container">
     <header>
       <h1 class="brand-title">HLO Master</h1>
-      <p class="subtitle">இந்திய மக்கள் தொகை கணக்கெடுப்பு – வீட்டு பட்டியலிடுதல் மற்றும் வீடுகள் கணக்கெடுப்பு</p>
+      <p class="subtitle">இந்திய மக்கள் தொகை கணக்கெடுப்பு – வீட்டு பட்டியலிடுதல்</p>
     </header>
 
     <!-- START SCREEN -->
-    <div id="start-screen" style="text-align: center; padding: 10px 0;">
-      <p style="font-size: 1.05rem; margin-bottom: 20px; color: var(--text-muted);">
+    <div id="start-screen" style="text-align: center;">
+      <p style="font-size: 0.9rem; margin-bottom: 14px; color: var(--text-muted);">
         புதிய கணக்கெடுப்பைத் தொடங்கலாம் அல்லது சேமிக்கப்பட்ட விவரங்களைப் பார்வையிடலாம்.
       </p>
 
@@ -462,17 +465,17 @@
           <div id="storage-progress-fill" class="storage-progress-fill"></div>
         </div>
         <div class="storage-info-text">
-          <span id="storage-used">பயன்படுத்தப்பட்டது: 0 MB</span>
+          <span id="storage-used">பயன்பாடு: 0 MB</span>
           <span id="storage-quota">மொத்தம்: 0 MB</span>
         </div>
       </div>
 
-      <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+      <div class="btn-group">
         <button class="btn btn-primary" onclick="startSurvey()">
-          <span>புதிய கணக்கெடுப்பு (Start New)</span>
+          <span>புதிய கணக்கெடுப்பு (Start)</span>
         </button>
         <button class="btn btn-outline" onclick="showHistoryScreen()">
-          <span>வரலாறு / சேமிக்கப்பட்டவை (History)</span>
+          <span>வரலாறு (History)</span>
         </button>
       </div>
     </div>
@@ -494,8 +497,8 @@
         <div id="question-desc" class="question-desc"></div>
         <div id="options-container" class="options-grid"></div>
 
-        <div style="margin-top: 16px;">
-          <label style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 600;" for="answer-input">
+        <div>
+          <label style="font-size: 0.78rem; color: var(--text-muted); margin-bottom: 4px; display: block; font-weight: 600;" for="answer-input">
             பதில் (திருத்த / Edit Answer):
           </label>
           <input type="text" id="answer-input" class="input-field" placeholder="உங்கள் பதிலை உள்ளிடவும்..." />
@@ -510,25 +513,25 @@
           <span>அடுத்தது</span>
         </button>
         <button id="verify-btn" class="btn btn-success hidden" onclick="showVerifyScreen()">
-          <span>சரிபார்க்க (Verify All Data)</span>
+          <span>சரிபார்க்க</span>
         </button>
       </div>
     </div>
 
     <!-- PRE-SUBMIT VERIFICATION SCREEN -->
     <div id="verify-screen" class="hidden">
-      <h2 style="font-size: 1.3rem; color: var(--primary); margin-bottom: 8px;">தரவு சரிபார்ப்பு (Data Verification)</h2>
-      <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 16px;">
-        சமர்ப்பிப்பதற்கு முன் நீங்கள் பதிவு செய்த அனைத்து பதில்களையும் சரிபார்க்கவும்:
+      <h2 style="font-size: 1.15rem; color: var(--primary); margin-bottom: 6px;">தரவு சரிபார்ப்பு (Data Verification)</h2>
+      <p style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">
+        சமர்ப்பிப்பதற்கு முன் உங்கள் பதில்களைச் சரிபார்க்கவும்:
       </p>
 
-      <div class="table-container" style="max-height: 420px; overflow-y: auto;">
+      <div class="table-container" style="max-height: 50vh;">
         <table>
           <thead>
             <tr>
-              <th style="width: 8%;">வ.எண்</th>
-              <th style="width: 52%;">கேள்வி (Question Title)</th>
-              <th style="width: 40%;">பதிவு செய்யப்பட்ட பதில் (Answer)</th>
+              <th style="width: 15%;">வ.எண்</th>
+              <th style="width: 45%;">கேள்வி</th>
+              <th style="width: 40%;">பதில்</th>
             </tr>
           </thead>
           <tbody id="verify-table-body">
@@ -537,32 +540,31 @@
         </table>
       </div>
 
-      <div class="nav-controls" style="margin-top: 24px;">
+      <div class="btn-group" style="margin-top: 16px;">
         <button class="btn btn-secondary" onclick="backToSurvey()">
-          <span>திருத்த மீண்டும் செல்லவும் (Back)</span>
+          <span>திருத்த மீண்டும் செல் (Back)</span>
         </button>
         <button class="btn btn-success" onclick="submitSurvey()">
-          <span>உறுதி செய்து பதிவிறக்கு (Confirm & Download)</span>
+          <span>உறுதி செய் (Confirm & Download)</span>
         </button>
       </div>
     </div>
 
     <!-- HISTORY / STORED DATA SCREEN -->
     <div id="history-screen" class="hidden">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h2 style="font-size: 1.3rem; color: var(--primary);">சேமிக்கப்பட்ட தரவுகள் (History)</h2>
-        <button class="btn btn-secondary" onclick="goHome()">முகப்பு (Home)</button>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+        <h2 style="font-size: 1.15rem; color: var(--primary);">சேமிக்கப்பட்டவை (History)</h2>
+        <button class="btn btn-secondary" style="width: auto; min-height: 36px; padding: 6px 12px; font-size: 0.8rem;" onclick="goHome()">முகப்பு</button>
       </div>
 
-      <div class="table-container">
+      <div class="table-container" style="max-height: 55vh;">
         <table>
           <thead>
             <tr>
-              <th>வரிசை</th>
-              <th>குடும்பத் தலைவர் பெயர்</th>
-              <th>வீட்டு எண்</th>
-              <th>தேதி / நேரம்</th>
-              <th>செயல்பாடு</th>
+              <th style="width: 12%;">வரிசை</th>
+              <th style="width: 38%;">பெயர்</th>
+              <th style="width: 22%;">வீட்டு எண்</th>
+              <th style="width: 28%;">செயல்</th>
             </tr>
           </thead>
           <tbody id="history-table-body">
@@ -573,18 +575,18 @@
     </div>
 
     <!-- CONFIRMATION SCREEN -->
-    <div id="confirm-screen" style="text-align: center; padding: 20px 0;" class="hidden">
-      <h2 style="color: #059669; margin-bottom: 12px; font-size: 1.5rem;">வெற்றிகரமாக சேமிக்கப்பட்டது!</h2>
-      <p id="confirm-msg" style="color: var(--text-muted); line-height: 1.6; margin-bottom: 24px;"></p>
-      <div style="display: flex; justify-content: center; gap: 12px; flex-wrap: wrap;">
+    <div id="confirm-screen" style="text-align: center; padding: 10px 0;" class="hidden">
+      <h2 style="color: #059669; margin-bottom: 8px; font-size: 1.3rem;">வெற்றிகரமாக சேமிக்கப்பட்டது!</h2>
+      <p id="confirm-msg" style="color: var(--text-muted); font-size: 0.85rem; line-height: 1.5; margin-bottom: 20px;"></p>
+      <div class="btn-group">
         <button class="btn btn-secondary" onclick="reEditData()">
-          <span>மறுபதிப்பீடு செய்ய (Re-edit)</span>
+          <span>மறுபதிப்பீடு செய்ய</span>
         </button>
         <button class="btn btn-outline" onclick="showHistoryScreen()">
-          <span>வரலாற்றைப் பார்க்க (View History)</span>
+          <span>வரலாற்றைப் பார்க்க</span>
         </button>
         <button class="btn btn-primary" onclick="resetSurvey()">
-          <span>புதிய உள்ளீடு (New Entry)</span>
+          <span>புதிய உள்ளீடு</span>
         </button>
       </div>
     </div>
@@ -594,7 +596,7 @@
   <div id="view-modal" class="modal-overlay hidden">
     <div class="modal-card">
       <div class="modal-header">
-        <h3 id="modal-title" style="color: var(--primary);">முழு விவரங்கள்</h3>
+        <h3 id="modal-title" style="color: var(--primary); font-size: 1rem;">முழு விவரங்கள்</h3>
         <button class="close-btn" onclick="closeModal()">&times;</button>
       </div>
       <div class="modal-body">
@@ -602,9 +604,9 @@
           <table>
             <thead>
               <tr>
-                <th style="width: 10%;">வரிசை</th>
-                <th style="width: 50%;">கேள்வி (Question)</th>
-                <th style="width: 40%;">பதில் (Recorded Response)</th>
+                <th style="width: 15%;">வரிசை</th>
+                <th style="width: 45%;">கேள்வி</th>
+                <th style="width: 40%;">பதில்</th>
               </tr>
             </thead>
             <tbody id="modal-table-body">
@@ -617,16 +619,14 @@
   </div>
 
   <script>
-    // Register Service Worker for Offline PWA Support
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('sw.js')
-          .then(reg => console.log('Service Worker Registered'))
-          .catch(err => console.warn('SW registration failed: ', err));
+          .then(reg => console.log('SW Registered'))
+          .catch(err => console.warn('SW failed: ', err));
       });
     }
 
-    // Update OPFS Storage Quota Display
     async function updateStorageQuota() {
       if ('storage' in navigator && 'estimate' in navigator.storage) {
         try {
@@ -635,7 +635,7 @@
           const quotaMB = (quota / (1024 * 1024)).toFixed(0);
           const percent = ((usage / quota) * 100).toFixed(1);
 
-          document.getElementById('storage-used').innerText = `பயன்படுத்தப்பட்டது: ${usageMB} MB`;
+          document.getElementById('storage-used').innerText = `பயன்பாடு: ${usageMB} MB`;
           document.getElementById('storage-quota').innerText = `மொத்தம்: ${quotaMB} MB`;
           document.getElementById('storage-percent').innerText = `${percent}%`;
           document.getElementById('storage-progress-fill').style.width = `${percent}%`;
@@ -795,7 +795,6 @@
       }
     }
 
-    // PRE-SUBMIT VERIFICATION TABLE SCREEN
     function showVerifyScreen() {
       document.getElementById('survey-screen').classList.add('hidden');
       document.getElementById('verify-screen').classList.remove('hidden');
@@ -805,7 +804,7 @@
 
       allQuestions.forEach((q, idx) => {
         const tr = document.createElement('tr');
-        const ans = userAnswers[q.id] || '[தவிர்க்கப்பட்டது / SKIPPED]';
+        const ans = userAnswers[q.id] || '[SKIPPED]';
         tr.innerHTML = `
           <td><strong>${idx + 1}</strong></td>
           <td>${q.title}</td>
@@ -820,7 +819,6 @@
       document.getElementById('survey-screen').classList.remove('hidden');
     }
 
-    // SUBMIT & DOWNLOAD
     async function submitSurvey() {
       const headName = userAnswers["q10"] || "Census_Data";
       const houseNo = userAnswers["q2"] || "House";
@@ -838,7 +836,7 @@
       saveToHistory(headName, houseNo, userAnswers);
       downloadTextFile(filename, formattedContent);
 
-      document.getElementById('confirm-msg').innerText = `தரவுகள் '${filename}' எனும் பெயரில் வெற்றிகரமாகப் பதிவிறக்கம் செய்யப்பட்டுள்ளது.`;
+      document.getElementById('confirm-msg').innerText = `'${filename}' என்ற கோப்பாக வெற்றிகரமாக சேமிக்கப்பட்டு பதிவிறக்கப்பட்டது.`;
       document.getElementById('verify-screen').classList.add('hidden');
       document.getElementById('confirm-screen').classList.remove('hidden');
       updateStorageQuota();
@@ -848,7 +846,7 @@
       let doc = "========================================================================================\n";
       doc += "               வீட்டுப்பட்டியலிடுதல் மற்றும் வீடுகள் கணக்கெடுப்பு (HLO Master)\n";
       doc += "========================================================================================\n\n";
-      
+
       const pad = (str, len) => (str + " ".repeat(len)).slice(0, len);
 
       doc += "+----+-----------------------------------------------------+----------------------------+\n";
@@ -894,7 +892,7 @@
       let history = JSON.parse(localStorage.getItem('hlo_history') || '[]');
 
       if (history.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; color: var(--text-muted);">சேமிக்கப்பட்ட தரவுகள் எதுவுமில்லை</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color: var(--text-muted);">சேமிக்கப்பட்ட தரவுகள் எதுவுமில்லை</td></tr>';
         return;
       }
 
@@ -904,10 +902,9 @@
           <td>${idx + 1}</td>
           <td><strong>${entry.headName || '-'}</strong></td>
           <td>${entry.houseNo || '-'}</td>
-          <td>${entry.timestamp}</td>
           <td>
-            <button class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem;" onclick="viewHistoryData(${entry.id})">
-              திறந்து பார் (Open)
+            <button class="btn btn-outline" style="min-height: 32px; padding: 4px 8px; font-size: 0.75rem;" onclick="viewHistoryData(${entry.id})">
+              திற
             </button>
           </td>
         `;
@@ -921,14 +918,14 @@
 
       if (!entry) return;
 
-      document.getElementById('modal-title').innerText = `${entry.headName || 'குடும்ப தலைவர்'} - விவரங்கள்`;
+      document.getElementById('modal-title').innerText = `${entry.headName || 'விவரங்கள்'}`;
 
       const tbody = document.getElementById('modal-table-body');
       tbody.innerHTML = '';
 
       allQuestions.forEach((q, idx) => {
         const tr = document.createElement('tr');
-        const ans = entry.answers[q.id] || '[SKIPPED / N/A]';
+        const ans = entry.answers[q.id] || '[SKIPPED]';
         tr.innerHTML = `
           <td>${idx + 1}</td>
           <td>${q.title}</td>
