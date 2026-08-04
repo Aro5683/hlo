@@ -1,0 +1,21 @@
+{
+  "short_name": "HLO Master",
+  "name": "HLO Master - Census Survey",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/619/619032.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/619/619032.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "./index.html",
+  "background_color": "#f8fafc",
+  "theme_color": "#2563eb",
+  "display": "standalone",
+  "orientation": "portrait"
+}
